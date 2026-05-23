@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#0a0a0a" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="eRide Strike" />
+  <meta name="description" content="Calcola il consumo della tua Scott eRide Strike 930" />
+  <title>Scott eRide Strike 930 — Calcolatore</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:        #0a0a0a;
+      --surface:   #131313;
+      --card:      #1a1a1a;
+      --border:    #2a2a2a;
+      --accent:    #e8ff00;
+      --accent2:   #ff6b00;
+      --text:      #f0f0f0;
+      --muted:     #666;
+      --eco:       #39d353;
+      --tour:      #2196f3;
+      --ebike:     #ff9800;
+      --turbo:     #f44336;
+      --radius:    12px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Barlow', sans-serif;
+      overscroll-behavior: none;
+    }
+
+    /* ── HEADER ── */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 20px 10px;
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-badge {
+      background: var(--accent);
+      color: #000;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    .header-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 22px;
+      letter-spacing: 0.02em;
+      line-height: 1;
+    }
+
+    .header-sub {
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    .battery-icon {
+      margin-left: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .battery-icon svg { display: block; }
+
+    /* ── MAIN ── */
+    main {
+      padding: 20px 16px 100px;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    /* ── SEZIONE BATTERIA ── */
+    .section-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .battery-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      margin-bottom: 20px;
+    }
+
+    .battery-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .battery-row label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+      color: var(--text);
+      width: 130px;
+      flex-shrink: 0;
+    }
+
+    .input-unit {
+      display: flex;
+      align-items: center;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      flex: 1;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+
+    .input-unit:focus-within {
+      border-color: var(--accent);
+    }
+
+    .input-unit input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      padding: 8px 10px;
+      width: 100%;
+    }
+
+    .input-unit .unit {
+      font-size: 12px;
+      color: var(--muted);
+      padding-right: 10px;
+      white-space: nowrap;
+      font-weight: 500;
+    }
+
+    /* Batteria visuale */
+    .batt-visual {
+      margin-top: 6px;
+    }
+
+    .batt-bar-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .batt-bar-bg {
+      flex: 1;
+      height: 12px;
+      background: var(--card);
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      position: relative;
+    }
+
+    .batt-bar-fill {
+      height: 100%;
+      border-radius: 6px;
+      background: linear-gradient(90deg, #39d353, var(--accent));
+      transition: width 0.4s cubic-bezier(.4,0,.2,1);
+    }
+
+    .batt-pct {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 18px;
+      color: var(--accent);
+      min-width: 46px;
+      text-align: right;
+    }
+
+    /* ── SEZIONE KM TOTALI ── */
+    .km-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      margin-bottom: 20px;
+    }
+
+    .km-total-display {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 56px;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      line-height: 1;
+      text-align: center;
+      margin: 6px 0 4px;
+    }
+
+    .km-total-display span {
+      font-size: 24px;
+      font-weight: 400;
+      color: var(--muted);
+    }
+
+    .km-note {
+      font-size: 11px;
+      color: var(--muted);
+      text-align: center;
+      margin-bottom: 4px;
+    }
+
+    /* ── LIVELLI ── */
+    .levels-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .level-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+
+    .level-card.active {
+      border-color: var(--lc);
+    }
+
+    .level-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: var(--lc);
+    }
+
+    .level-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .level-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--lc);
+      flex-shrink: 0;
+    }
+
+    .level-name {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 18px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--lc);
+      flex: 1;
+    }
+
+    .level-wh {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .level-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    /* Slider km */
+    .slider-wrap {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .km-slider {
+      flex: 1;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 4px;
+      border-radius: 2px;
+      background: var(--card);
+      outline: none;
+      cursor: pointer;
+    }
+
+    .km-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--lc);
+      cursor: pointer;
+      border: 2px solid var(--bg);
+      box-shadow: 0 0 0 1px var(--lc);
+    }
+
+    .km-slider::-moz-range-thumb {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: var(--lc);
+      cursor: pointer;
+      border: 2px solid var(--bg);
+    }
+
+    .slider-km-val {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 22px;
+      min-width: 52px;
+      text-align: right;
+      color: var(--lc);
+    }
+
+    /* Stat pill */
+    .stat-pill {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .stat-pill .s-label {
+      font-size: 10px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 600;
+    }
+
+    .stat-pill .s-value {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--text);
+    }
+
+    .stat-pill .s-value.hi { color: var(--lc); }
+
+    /* Turbo input */
+    .turbo-wh-row {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .turbo-wh-row label {
+      font-size: 12px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    /* ── RIEPILOGO ── */
+    .summary-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      margin-bottom: 20px;
+    }
+
+    .summary-total {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .summary-total .big {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: 52px;
+      line-height: 1;
+      color: var(--accent);
+    }
+
+    .summary-total .unit {
+      font-size: 18px;
+      color: var(--muted);
+    }
+
+    .summary-total .label {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.3;
+      margin-left: auto;
+      text-align: right;
+    }
+
+    /* Barra progresso batteria usata */
+    .wh-used-bar {
+      margin: 10px 0;
+    }
+
+    .wh-used-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .wh-used-label strong {
+      color: var(--text);
+    }
+
+    .wh-bar-bg {
+      height: 8px;
+      background: var(--card);
+      border-radius: 4px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .wh-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.4s cubic-bezier(.4,0,.2,1), background 0.4s;
+    }
+
+    .wh-bar-fill.ok    { background: linear-gradient(90deg, var(--eco), var(--accent)); }
+    .wh-bar-fill.warn  { background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+    .wh-bar-fill.over  { background: linear-gradient(90deg, var(--accent2), var(--turbo)); }
+
+    .summary-rows {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 14px;
+    }
+
+    .summary-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+    }
+
+    .summary-row .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .summary-row .rname {
+      flex: 1;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .summary-row .rkm {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+    }
+
+    .summary-row .rwh {
+      color: var(--muted);
+      font-size: 12px;
+      min-width: 60px;
+      text-align: right;
+    }
+
+    /* Avviso range */
+    .alert-box {
+      margin-top: 14px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      display: none;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .alert-box.warn  { background: rgba(255,107,0,0.12); border: 1px solid rgba(255,107,0,0.4); color: var(--accent2); display: flex; }
+    .alert-box.over  { background: rgba(244,67,54,0.12);  border: 1px solid rgba(244,67,54,0.4);  color: var(--turbo);  display: flex; }
+    .alert-box.ok    { background: rgba(57,211,83,0.1);   border: 1px solid rgba(57,211,83,0.35); color: var(--eco);    display: flex; }
+
+    /* ── RESET BUTTON ── */
+    .reset-btn {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+    }
+
+    .reset-btn:hover, .reset-btn:active {
+      background: var(--surface);
+      color: var(--text);
+      border-color: var(--text);
+    }
+
+    /* ── DIVIDER ── */
+    .divider { height: 1px; background: var(--border); margin: 6px 0 16px; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    /* Install banner */
+    #install-banner {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      left: 16px; right: 16px;
+      background: var(--card);
+      border: 1px solid var(--accent);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      z-index: 200;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    }
+
+    #install-banner p {
+      flex: 1;
+      font-size: 13px;
+      line-height: 1.4;
+      color: var(--text);
+    }
+
+    #install-banner button {
+      background: var(--accent);
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 15px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    #install-close {
+      background: none; border: none; color: var(--muted); cursor: pointer; font-size: 20px; padding: 0 4px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <div class="brand-badge">SCOTT</div>
+        <div class="header-title">eRide Strike 930</div>
+      </div>
+      <div class="header-sub">Calcolatore autonomia batteria</div>
+    </div>
+    <div class="battery-icon">
+      <svg width="36" height="20" viewBox="0 0 36 20">
+        <rect x="1" y="1" width="30" height="18" rx="3" ry="3" fill="none" stroke="#444" stroke-width="1.5"/>
+        <rect x="31" y="6" width="4" height="8" rx="2" fill="#444"/>
+        <rect id="hdr-batt-fill" x="3" y="3" width="26" height="14" rx="2" fill="var(--accent)"/>
+        <text id="hdr-batt-pct" x="16" y="15" text-anchor="middle" font-family="Barlow Condensed" font-size="9" font-weight="800" fill="#000">100%</text>
+      </svg>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- Batteria -->
+  <div class="section-label">⚡ Stato batteria</div>
+  <div class="battery-section">
+    <div class="battery-row">
+      <label>Capacità batteria</label>
+      <div class="input-unit">
+        <input type="number" id="cap-wh" value="630" min="100" max="1000" step="1" inputmode="decimal" />
+        <span class="unit">Wh</span>
+      </div>
+    </div>
+    <div class="battery-row" style="margin-bottom:6px;">
+      <label>Carica attuale</label>
+      <div class="input-unit">
+        <input type="number" id="charge-pct" value="100" min="1" max="100" step="1" inputmode="decimal" />
+        <span class="unit">%</span>
+      </div>
+    </div>
+    <div class="batt-visual">
+      <div class="batt-bar-wrap">
+        <div class="batt-bar-bg" style="flex:1;">
+          <div class="batt-bar-fill" id="batt-fill-bar" style="width:100%;"></div>
+        </div>
+        <div class="batt-pct" id="batt-pct-label">630 Wh</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KM totali -->
+  <div class="section-label">🗺️ Km totali percorso</div>
+  <div class="km-section">
+    <div class="battery-row" style="margin-bottom:0;">
+      <label>Distanza totale</label>
+      <div class="input-unit">
+        <input type="number" id="km-total" value="50" min="1" max="500" step="1" inputmode="decimal" />
+        <span class="unit">km</span>
+      </div>
+    </div>
+    <div class="km-total-display" id="km-total-display">50 <span>km</span></div>
+    <div class="km-note">Trascina i cursori per distribuire i km tra i livelli</div>
+  </div>
+
+  <!-- Livelli -->
+  <div class="levels-title">⚙️ Distribuzione per livello di assistenza</div>
+
+  <!-- ECO -->
+  <div class="level-card" id="card-eco" style="--lc: var(--eco)">
+    <div class="level-header">
+      <div class="level-dot"></div>
+      <div class="level-name">ECO</div>
+      <div class="level-wh">3,4 Wh/km</div>
+    </div>
+    <div class="level-body">
+      <div class="slider-wrap">
+        <input type="range" class="km-slider" id="sl-eco" min="0" max="50" value="0" step="1" />
+        <div class="slider-km-val" id="val-eco">0 km</div>
+      </div>
+      <div class="stat-pill">
+        <div class="s-label">Wh usati</div>
+        <div class="s-value hi" id="wh-eco">0 Wh</div>
+      </div>
+      <div class="stat-pill">
+        <div class="s-label">% batteria</div>
+        <div class="s-value" id="pct-eco">0%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOUR -->
+  <div class="level-card" id="card-tour" style="--lc: var(--tour)">
+    <div class="level-header">
+      <div class="level-dot"></div>
+      <div class="level-name">TOUR</div>
+      <div class="level-wh">5,0 Wh/km</div>
+    </div>
+    <div class="level-body">
+      <div class="slider-wrap">
+        <input type="range" class="km-slider" id="sl-tour" min="0" max="50" value="0" step="1" />
+        <div class="slider-km-val" id="val-tour">0 km</div>
+      </div>
+      <div class="stat-pill">
+        <div class="s-label">Wh usati</div>
+        <div class="s-value hi" id="wh-tour">0 Wh</div>
+      </div>
+      <div class="stat-pill">
+        <div class="s-label">% batteria</div>
+        <div class="s-value" id="pct-tour">0%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EBIKE -->
+  <div class="level-card" id="card-ebike" style="--lc: var(--ebike)">
+    <div class="level-header">
+      <div class="level-dot"></div>
+      <div class="level-name">E-BIKE</div>
+      <div class="level-wh">10,0 Wh/km</div>
+    </div>
+    <div class="level-body">
+      <div class="slider-wrap">
+        <input type="range" class="km-slider" id="sl-ebike" min="0" max="50" value="0" step="1" />
+        <div class="slider-km-val" id="val-ebike">0 km</div>
+      </div>
+      <div class="stat-pill">
+        <div class="s-label">Wh usati</div>
+        <div class="s-value hi" id="wh-ebike">0 Wh</div>
+      </div>
+      <div class="stat-pill">
+        <div class="s-label">% batteria</div>
+        <div class="s-value" id="pct-ebike">0%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TURBO -->
+  <div class="level-card" id="card-turbo" style="--lc: var(--turbo)">
+    <div class="level-header">
+      <div class="level-dot"></div>
+      <div class="level-name">TURBO</div>
+      <div class="level-wh" id="turbo-wh-label">— Wh/km</div>
+    </div>
+    <div class="level-body">
+      <div class="turbo-wh-row">
+        <label>Wh/km stimati:</label>
+        <div class="input-unit" style="max-width:120px;">
+          <input type="number" id="turbo-wh-input" value="14" min="10.1" max="30" step="0.1" inputmode="decimal" />
+          <span class="unit">Wh/km</span>
+        </div>
+      </div>
+      <div class="slider-wrap">
+        <input type="range" class="km-slider" id="sl-turbo" min="0" max="50" value="0" step="1" />
+        <div class="slider-km-val" id="val-turbo">0 km</div>
+      </div>
+      <div class="stat-pill">
+        <div class="s-label">Wh usati</div>
+        <div class="s-value hi" id="wh-turbo">0 Wh</div>
+      </div>
+      <div class="stat-pill">
+        <div class="s-label">% batteria</div>
+        <div class="s-value" id="pct-turbo">0%</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Riepilogo -->
+  <div class="section-label">📊 Riepilogo</div>
+  <div class="summary-card">
+    <div class="summary-total">
+      <div class="big" id="sum-km">0</div>
+      <div class="unit">km</div>
+      <div class="label" style="font-size:12px;color:var(--muted);">km totali<br>assegnati</div>
+    </div>
+
+    <div class="wh-used-bar">
+      <div class="wh-used-label">
+        <span>Energia usata: <strong id="sum-wh-used">0 Wh</strong></span>
+        <span>Disponibile: <strong id="sum-wh-avail">630 Wh</strong></span>
+      </div>
+      <div class="wh-bar-bg">
+        <div class="wh-bar-fill ok" id="wh-bar-fill" style="width:0%;"></div>
+      </div>
+    </div>
+
+    <div class="summary-rows">
+      <div class="summary-row">
+        <div class="dot" style="background:var(--eco)"></div>
+        <div class="rname">ECO</div>
+        <div class="rkm" style="color:var(--eco)" id="r-eco-km">0 km</div>
+        <div class="rwh" id="r-eco-wh">0 Wh</div>
+      </div>
+      <div class="summary-row">
+        <div class="dot" style="background:var(--tour)"></div>
+        <div class="rname">TOUR</div>
+        <div class="rkm" style="color:var(--tour)" id="r-tour-km">0 km</div>
+        <div class="rwh" id="r-tour-wh">0 Wh</div>
+      </div>
+      <div class="summary-row">
+        <div class="dot" style="background:var(--ebike)"></div>
+        <div class="rname">E-BIKE</div>
+        <div class="rkm" style="color:var(--ebike)" id="r-ebike-km">0 km</div>
+        <div class="rwh" id="r-ebike-wh">0 Wh</div>
+      </div>
+      <div class="summary-row">
+        <div class="dot" style="background:var(--turbo)"></div>
+        <div class="rname">TURBO</div>
+        <div class="rkm" style="color:var(--turbo)" id="r-turbo-km">0 km</div>
+        <div class="rwh" id="r-turbo-wh">0 Wh</div>
+      </div>
+    </div>
+
+    <div class="alert-box" id="alert-box">
+      <span id="alert-icon">⚠️</span>
+      <span id="alert-msg"></span>
+    </div>
+  </div>
+
+  <button class="reset-btn" id="reset-btn">↺ Azzera tutto</button>
+
+</main>
+
+<!-- Install banner -->
+<div id="install-banner">
+  <p>📱 Installa l'app per usarla offline!</p>
+  <button id="install-btn">Installa</button>
+  <button id="install-close">✕</button>
+</div>
+
+<script>
+  // ── DATI BASE ──
+  const WH_PER_KM = { eco: 3.4, tour: 5.0, ebike: 10.0, turbo: 14.0 };
+  const MODES = ['eco','tour','ebike','turbo'];
+  let deferredPrompt = null;
+
+  // ── HELPER ──
+  const $ = id => document.getElementById(id);
+  const fmt1 = n => Number(n.toFixed(1));
+
+  // ── STATO ──
+  function getCapWh()    { return Math.max(1, parseFloat($('cap-wh').value) || 630); }
+  function getChargePct(){ return Math.min(100, Math.max(1, parseFloat($('charge-pct').value) || 100)); }
+  function getAvailWh()  { return getCapWh() * getChargePct() / 100; }
+  function getKmTotal()  { return Math.max(1, parseInt($('km-total').value) || 50); }
+  function getTurboWh()  { return Math.max(10.1, parseFloat($('turbo-wh-input').value) || 14); }
+
+  function getKms() {
+    return {
+      eco:   parseInt($('sl-eco').value)   || 0,
+      tour:  parseInt($('sl-tour').value)  || 0,
+      ebike: parseInt($('sl-ebike').value) || 0,
+      turbo: parseInt($('sl-turbo').value) || 0,
+    };
+  }
+
+  // ── AGGIORNA MAX SLIDERS ──
+  function updateSliderMax() {
+    const tot = getKmTotal();
+    MODES.forEach(m => {
+      $('sl-'+m).max = tot;
+    });
+  }
+
+  // ── CALCOLO E RENDER ──
+  function render() {
+    const capWh   = getCapWh();
+    const chgPct  = getChargePct();
+    const availWh = getAvailWh();
+    const kmTotal = getKmTotal();
+    const turboWh = getTurboWh();
+    const wh      = { eco: 3.4, tour: 5.0, ebike: 10.0, turbo: turboWh };
+
+    // Batteria header
+    const pctStr = Math.round(chgPct) + '%';
+    const fillW  = Math.round(26 * chgPct / 100);
+    $('hdr-batt-fill').setAttribute('width', fillW);
+    $('hdr-batt-pct').textContent = pctStr;
+    $('batt-fill-bar').style.width = chgPct + '%';
+    $('batt-pct-label').textContent = Math.round(availWh) + ' Wh';
+
+    // KM totali
+    $('km-total-display').innerHTML = kmTotal + ' <span>km</span>';
+    updateSliderMax();
+
+    // Turbo Wh/km label
+    $('turbo-wh-label').textContent = fmt1(turboWh) + ' Wh/km';
+
+    const kms = getKms();
+    let totalKmAssigned = 0;
+    let totalWhUsed = 0;
+
+    MODES.forEach(m => {
+      const km = kms[m];
+      const whUsed = km * wh[m];
+      const pctUsed = availWh > 0 ? (whUsed / availWh * 100) : 0;
+      totalKmAssigned += km;
+      totalWhUsed += whUsed;
+
+      $('val-'+m).textContent  = km + ' km';
+      $('wh-'+m).textContent   = Math.round(whUsed) + ' Wh';
+      $('pct-'+m).textContent  = fmt1(pctUsed) + '%';
+
+      // Card active
+      const card = $('card-'+m);
+      if (km > 0) card.classList.add('active'); else card.classList.remove('active');
+
+      // Summary rows
+      $('r-'+m+'-km').textContent = km + ' km';
+      $('r-'+m+'-wh').textContent = Math.round(whUsed) + ' Wh';
+    });
+
+    // Summary totals
+    $('sum-km').textContent  = totalKmAssigned;
+    $('sum-wh-used').textContent  = Math.round(totalWhUsed) + ' Wh';
+    $('sum-wh-avail').textContent = Math.round(availWh) + ' Wh';
+
+    // Barra Wh
+    const usedPct = availWh > 0 ? Math.min(100, totalWhUsed / availWh * 100) : 0;
+    const bar = $('wh-bar-fill');
+    bar.style.width = usedPct + '%';
+    bar.className = 'wh-bar-fill ' + (usedPct > 100 ? 'over' : usedPct > 85 ? 'warn' : 'ok');
+
+    // Alert
+    const alert = $('alert-box');
+    const kmUnassigned = kmTotal - totalKmAssigned;
+    alert.className = 'alert-box';
+
+    if (totalWhUsed > availWh) {
+      alert.classList.add('over');
+      $('alert-icon').textContent = '🔴';
+      $('alert-msg').textContent = `Energia insufficiente! Ti mancano ${Math.round(totalWhUsed - availWh)} Wh. Riduci i km o ricarica la batteria.`;
+    } else if (usedPct > 85) {
+      alert.classList.add('warn');
+      $('alert-icon').textContent = '⚠️';
+      $('alert-msg').textContent = `Attenzione: utilizzerai l'${Math.round(usedPct)}% della batteria disponibile.`;
+    } else if (totalKmAssigned > 0 && totalWhUsed <= availWh) {
+      alert.classList.add('ok');
+      $('alert-icon').textContent = '✅';
+      const riserva = Math.round(availWh - totalWhUsed);
+      $('alert-msg').textContent = `Autonomia sufficiente! Riserva: ${riserva} Wh (~${Math.round(riserva / 5)} km in TOUR).`;
+    }
+  }
+
+  // ── EVENTI ──
+  ['cap-wh','charge-pct','km-total','turbo-wh-input'].forEach(id => {
+    $(id).addEventListener('input', render);
+  });
+
+  MODES.forEach(m => {
+    $('sl-'+m).addEventListener('input', render);
+  });
+
+  // Reset
+  $('reset-btn').addEventListener('click', () => {
+    $('cap-wh').value    = 630;
+    $('charge-pct').value = 100;
+    $('km-total').value  = 50;
+    $('turbo-wh-input').value = 14;
+    MODES.forEach(m => $('sl-'+m).value = 0);
+    render();
+  });
+
+  // ── PWA INSTALL ──
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    deferredPrompt = e;
+    $('install-banner').style.display = 'flex';
+  });
+
+  $('install-btn').addEventListener('click', async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    $('install-banner').style.display = 'none';
+  });
+
+  $('install-close').addEventListener('click', () => {
+    $('install-banner').style.display = 'none';
+  });
+
+  // ── SERVICE WORKER ──
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  }
+
+  // ── INIT ──
+  render();
+</script>
+</body>
+</html>
