@@ -453,7 +453,13 @@ window.onload = function(){
   id('savebtn').addEventListener('click', saveRide);
   id('expbtn').addEventListener('click', exportCSV);
   loadHistory();
-  if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+  if('serviceWorker' in navigator){
+    var hadCtl = !!navigator.serviceWorker.controller, reloaded = false;
+    navigator.serviceWorker.addEventListener('controllerchange', function(){
+      if(hadCtl && !reloaded){ reloaded = true; location.reload(); }
+    });
+    navigator.serviceWorker.register('sw.js').then(function(reg){ reg.update(); });
+  }
   calc();
 };
 </script>
