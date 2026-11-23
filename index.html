@@ -1,73 +1,461 @@
-#!/usr/bin/env python3
-"""Generate PWA icons for Scott eRide Strike app"""
-import base64, os
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#2c7a3a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="E-Bike Battery">
+<title>E-Bike Battery</title>
+<link rel="manifest" href="manifest.json">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f5f1;min-height:100vh}
+header{background:#2c7a3a;color:#fff;padding:18px 16px 14px;text-align:center}
+header h1{font-size:20px;font-weight:700;letter-spacing:-0.3px}
+header p{font-size:12px;opacity:.75;margin-top:3px}
+.wrap{padding:14px;max-width:460px;margin:0 auto}
+.card{background:#fff;border-radius:14px;padding:18px;margin-bottom:14px;box-shadow:0 1px 8px rgba(0,0,0,.08)}
+.card h2{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#2c7a3a;border-bottom:1px solid #e4f0e6;padding-bottom:9px;margin-bottom:14px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label{display:block;font-size:12px;color:#666;margin-bottom:5px;font-weight:500}
+input[type=number],select{
+  width:100%;padding:11px 13px;border:1.5px solid #ddd;border-radius:10px;
+  font-size:18px;font-weight:700;color:#1a1a1a;background:#fafafa;
+  -webkit-appearance:none;appearance:none;font-family:inherit
+}
+input[type=number]:focus,select:focus{outline:none;border-color:#2c7a3a;background:#fff}
+select{font-size:15px;font-weight:600;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7'%3E%3Cpath fill='%232c7a3a' d='M5 7L0 0h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;padding-right:35px}
+input[type=range]{width:100%;margin:10px 0 2px;accent-color:#2c7a3a;height:34px;touch-action:pan-y;pointer-events:none;-webkit-appearance:none;appearance:none;background:transparent}
+input[type=range]::-webkit-slider-runnable-track{height:8px;background:#d4e8d4;border-radius:99px}
+input[type=range]::-moz-range-track{height:8px;background:#d4e8d4;border-radius:99px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;pointer-events:auto;width:30px;height:30px;margin-top:-11px;border-radius:50%;background:#2c7a3a;border:3px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.35)}
+input[type=range]::-moz-range-thumb{pointer-events:auto;width:24px;height:24px;border-radius:50%;background:#2c7a3a;border:3px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.35)}
+.tag{font-size:10px;font-weight:700;color:#2c7a3a;background:#e4f0e6;padding:2px 7px;border-radius:20px;margin-left:5px;vertical-align:middle}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.box{border-radius:11px;padding:13px 10px;text-align:center}
+.box .num{font-size:22px;font-weight:800;line-height:1;margin-bottom:3px}
+.box .lbl{font-size:10px;color:#666;font-weight:500}
+.blue{background:#e8f4fd;border:1px solid #c5dff5}
+.blue .num{color:#1565c0}
+.green{background:#e4f0e6;border:1px solid #b8d9bc}
+.green .num{color:#2c7a3a}
+.purple{background:#f3e5f5;border:1px solid #d8b8e0}
+.purple .num{color:#6a1b9a}
+.barwrap{height:10px;background:#e0e0e0;border-radius:99px;overflow:hidden;margin:12px 0 5px}
+.barfill{height:100%;background:linear-gradient(90deg,#2c7a3a,#52b564);border-radius:99px;transition:width .4s ease}
+.barlbl{display:flex;justify-content:space-between;font-size:11px;color:#999}
+.badge{display:inline-block;padding:7px 16px;border-radius:99px;font-size:14px;font-weight:700;margin-bottom:8px}
+.ottima{background:#d4edda;color:#155724}
+.buona{background:#fff3cd;color:#856404}
+.media{background:#ffe0b2;color:#7a3f00}
+.alta{background:#f8d7da;color:#842029}
+.erow{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #f0f0f0;font-size:13px}
+.erow:last-child{border:none}
+.erow .k{color:#888}
+.erow .v{font-weight:700;color:#1a1a1a}
+.tbox{background:#e4f0e6;border-radius:9px;padding:9px 12px;font-size:12px;color:#2c7a3a;font-weight:600;margin-bottom:12px}
+.foot{text-align:center;font-size:11px;color:#bbb;padding-bottom:20px}
 
-# SVG icon - lightning bolt on dark background with Scott yellow
-svg_192 = '''<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192">
-  <rect width="192" height="192" rx="32" fill="#0a0a0a"/>
-  <rect width="192" height="192" rx="32" fill="url(#grad)" opacity="0.15"/>
-  <defs>
-    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#e8ff00"/>
-      <stop offset="100%" style="stop-color:#ff6b00"/>
-    </linearGradient>
-  </defs>
-  <!-- Lightning bolt -->
-  <polygon points="112,20 72,100 100,100 80,172 132,88 104,88 128,20" fill="#e8ff00"/>
-  <!-- Small SCOTT text area -->
-  <rect x="20" y="160" width="152" height="16" rx="3" fill="#e8ff00" opacity="0.15"/>
-</svg>'''
+.sess h2{display:flex;justify-content:space-between;align-items:center}
+.sess h2 span{font-size:10px;color:#888;font-weight:600;text-transform:none;letter-spacing:0}
+.kmhead{display:flex;justify-content:space-between;align-items:flex-end;gap:10px}
+.kmhead>div:first-child{flex:1}
+.sres{margin-top:10px;font-size:12px;color:#2c7a3a;background:#e4f0e6;border-radius:9px;padding:8px 12px;font-weight:600}
+.stack{display:flex;height:14px;border-radius:99px;overflow:hidden;background:#e0e0e0;margin:12px 0 6px}
+.stack .s1{background:#52b564;transition:width .4s ease}
+.stack .s2{background:#6a1b9a;transition:width .4s ease}
+.legend{display:flex;justify-content:space-between;font-size:11px;color:#666;font-weight:600}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}
+.bigtot{text-align:center;margin-bottom:4px}
+.bigtot .n{font-size:34px;font-weight:800;color:#2c7a3a;line-height:1}
+.bigtot .l{font-size:11px;color:#888;margin-top:3px}
 
-svg_512 = svg_192.replace('width="192" height="192" viewBox="0 0 192 192"',
-                           'width="512" height="512" viewBox="0 0 192 192"')
+.hitem{background:#f8fdf8;border:1px solid #d4e8d4;border-radius:10px;padding:12px;margin-bottom:9px;position:relative}
+.hitem .hdate{font-size:11px;color:#888;margin-bottom:5px;font-weight:600}
+.hitem .hnote{font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:6px}
+.hitem .hsub{font-size:11px;color:#777;margin-bottom:6px}
+.hitem .htags{display:flex;flex-wrap:wrap;gap:5px}
+.hitem .htag{font-size:11px;background:#e4f0e6;color:#2c7a3a;padding:2px 8px;border-radius:20px;font-weight:600}
+.hitem .hdel{position:absolute;top:10px;right:10px;background:none;border:none;font-size:16px;color:#ccc;cursor:pointer;padding:2px 6px}
+.hempty{text-align:center;font-size:13px;color:#bbb;padding:10px 0}
+</style>
+</head>
+<body>
+<header>
+  <h1>E-Bike Battery</h1>
+  <p>Calcola consumi, autonomia ed efficienza</p>
+</header>
+<div class="wrap">
 
-os.makedirs('icons', exist_ok=True)
+  <div class="card">
+    <h2>Batteria</h2>
+    <label>Capacita batteria <span class="tag">Wh</span></label>
+    <input type="number" id="cap" value="625" min="1" max="9999" inputmode="numeric">
+    <div class="row2" style="margin-top:10px">
+      <div>
+        <label>Carica inizio <span class="tag">%</span></label>
+        <input type="number" id="ini" value="100" min="0" max="100" inputmode="numeric">
+      </div>
+      <div>
+        <label>Carica fine <span class="tag">%</span></label>
+        <input type="number" id="fin" value="68" min="0" max="100" inputmode="numeric">
+      </div>
+    </div>
+  </div>
 
-with open('icons/icon-192.svg', 'w') as f:
-    f.write(svg_192)
+  <!-- SESSIONE 1 -->
+  <div class="card sess">
+    <h2>Sessione 1 <span>es. tratto pianeggiante</span></h2>
+    <div class="kmhead">
+      <div>
+        <label>Km percorsi <span class="tag">km</span></label>
+        <input type="number" id="km1" value="25" min="0" step="0.1" inputmode="decimal">
+      </div>
+      <div style="width:130px">
+        <label>Dislivello <span class="tag">m</span></label>
+        <input type="number" id="d1" value="0" min="0" step="10" inputmode="numeric">
+      </div>
+    </div>
+    <input type="range" id="sl1" min="0" max="150" step="0.5" value="25">
+    <div class="barlbl"><span>0 km</span><span>150 km</span></div>
+    <label style="margin-top:10px">Tipo di terreno</label>
+    <select id="ter1">
+      <option value="1.00">Strada — asfalto liscio</option>
+      <option value="1.25">Sterrato — ghiaia o terra battuta</option>
+      <option value="1.60">Fango — terreno bagnato</option>
+      <option value="1.90">Neve — neve o sabbia profonda</option>
+    </select>
+    <div class="sres" id="sr1">—</div>
+  </div>
 
-with open('icons/icon-512.svg', 'w') as f:
-    f.write(svg_512)
+  <!-- SESSIONE 2 -->
+  <div class="card sess">
+    <h2>Sessione 2 <span>es. tratto alpino</span></h2>
+    <div class="kmhead">
+      <div>
+        <label>Km percorsi <span class="tag">km</span></label>
+        <input type="number" id="km2" value="18" min="0" step="0.1" inputmode="decimal">
+      </div>
+      <div style="width:130px">
+        <label>Dislivello <span class="tag">m</span></label>
+        <input type="number" id="d2" value="400" min="0" step="10" inputmode="numeric">
+      </div>
+    </div>
+    <input type="range" id="sl2" min="0" max="150" step="0.5" value="18">
+    <div class="barlbl"><span>0 km</span><span>150 km</span></div>
+    <label style="margin-top:10px">Tipo di terreno</label>
+    <select id="ter2">
+      <option value="1.00">Strada — asfalto liscio</option>
+      <option value="1.25">Sterrato — ghiaia o terra battuta</option>
+      <option value="1.60">Fango — terreno bagnato</option>
+      <option value="1.90">Neve — neve o sabbia profonda</option>
+    </select>
+    <div class="sres" id="sr2">—</div>
+  </div>
 
-# Try to convert with cairosvg or use Python Pillow fallback
-try:
-    import cairosvg
-    cairosvg.svg2png(bytestring=svg_192.encode(), write_to='icons/icon-192.png', output_width=192, output_height=192)
-    cairosvg.svg2png(bytestring=svg_512.encode(), write_to='icons/icon-512.png', output_width=512, output_height=512)
-    print("Icons generated with cairosvg")
-except ImportError:
-    # Fallback: generate with Pillow
-    try:
-        from PIL import Image, ImageDraw
-        for size in [192, 512]:
-            img = Image.new('RGBA', (size, size), (0,0,0,0))
-            d = ImageDraw.Draw(img)
-            # Rounded rect background
-            d.rounded_rectangle([0,0,size-1,size-1], radius=int(size*0.17), fill=(10,10,10,255))
-            # Lightning bolt scaled
-            s = size / 192
-            pts = [(112*s,20*s),(72*s,100*s),(100*s,100*s),(80*s,172*s),(132*s,88*s),(104*s,88*s),(128*s,20*s)]
-            d.polygon(pts, fill=(232,255,0,255))
-            img.save(f'icons/icon-{size}.png')
-        print("Icons generated with Pillow")
-    except ImportError:
-        # Last resort: copy a minimal 1x1 PNG
-        import struct, zlib
-        def make_png(size, color=(10,10,10)):
-            w = h = size
-            raw = b''
-            for _ in range(h):
-                raw += b'\x00' + bytes(color) * w
-            compressed = zlib.compress(raw)
-            def chunk(t, d):
-                c = struct.pack('>I', len(d)) + t + d
-                return c + struct.pack('>I', zlib.crc32(t+d) & 0xffffffff)
-            png = b'\x89PNG\r\n\x1a\n'
-            png += chunk(b'IHDR', struct.pack('>IIBBBBB', w, h, 8, 2, 0, 0, 0))
-            png += chunk(b'IDAT', compressed)
-            png += chunk(b'IEND', b'')
-            return png
-        for s in [192, 512]:
-            with open(f'icons/icon-{s}.png', 'wb') as f:
-                f.write(make_png(s))
-        print("Icons generated (minimal fallback)")
+  <!-- TOTALE -->
+  <div class="card">
+    <h2>Totale percorso</h2>
+    <div class="bigtot"><div class="n" id="totkm">—</div><div class="l">km totali percorsi (sessione 1 + sessione 2)</div></div>
+    <div class="stack"><div class="s1" id="st1" style="width:50%"></div><div class="s2" id="st2" style="width:50%"></div></div>
+    <div class="legend">
+      <span><i class="dot" style="background:#52b564"></i><span id="lg1">—</span></span>
+      <span><i class="dot" style="background:#6a1b9a"></i><span id="lg2">—</span></span>
+    </div>
+    <div class="erow" style="margin-top:10px"><span class="k">Dislivello totale</span><span class="v" id="totd">—</span></div>
+  </div>
+
+  <div class="card">
+    <h2>Risultati</h2>
+    <div class="grid2">
+      <div class="box blue"><div class="num" id="r1">—</div><div class="lbl">Wh consumati</div></div>
+      <div class="box green"><div class="num" id="r2">—</div><div class="lbl">Wh/km reali</div></div>
+      <div class="box blue"><div class="num" id="r3">—</div><div class="lbl">Wh per 10 km</div></div>
+      <div class="box green"><div class="num" id="r4">—</div><div class="lbl">Batteria usata</div></div>
+    </div>
+    <div class="barwrap"><div class="barfill" id="bar" style="width:0"></div></div>
+    <div class="barlbl"><span id="bl1">—</span><span id="bl2">—</span></div>
+  </div>
+
+  <div class="card">
+    <h2>Autonomia stimata</h2>
+    <div class="grid3">
+      <div class="box purple"><div class="num" id="a1">—</div><div class="lbl">km totali</div></div>
+      <div class="box purple"><div class="num" id="a2">—</div><div class="lbl">km rimasti</div></div>
+      <div class="box purple"><div class="num" id="a3">—</div><div class="lbl">Wh rimasti</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Indice di efficienza</h2>
+    <div class="tbox" id="tbox">—</div>
+    <div class="badge ottima" id="badge">—</div>
+    <p id="bdesc" style="font-size:12px;color:#666;margin-bottom:12px">—</p>
+    <div class="erow"><span class="k">Wh/km misurati</span><span class="v" id="e1">—</span></div>
+    <div class="erow"><span class="k">Equivalente su strada piana</span><span class="v" id="e2">—</span></div>
+    <div class="erow"><span class="k">Fattore medio terreno + dislivello</span><span class="v" id="e3">—</span></div>
+    <div class="erow"><span class="k">Soglia ottima (questo percorso)</span><span class="v" id="e4">—</span></div>
+    <div class="erow"><span class="k">Autonomia residua su piano</span><span class="v" id="e5">—</span></div>
+  </div>
+
+  <div class="card">
+    <h2>Storico uscite</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px"><button id="savebtn" style="width:100%;padding:12px;background:#2c7a3a;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;margin-bottom:14px;cursor:pointer">Salva questa uscita</button><button id="expbtn" style="padding:12px;background:#1565c0;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer">Esporta CSV</button></div>
+    <div id="histlist"></div>
+  </div>
+
+  <div class="foot">Modifica i valori per ricalcolare<br>Stima: 100 m di dislivello ≈ 3 km di strada piana</div>
+</div>
+
+<script>
+// Quanti km di strada piana "pesa" 1 m di dislivello (100 m = 3 km)
+var DISL_KM = 0.03;
+
+function id(x){return document.getElementById(x)}
+function set(x,v){var e=id(x);if(e)e.textContent=v}
+function f1(n){return (Math.round(n*10)/10).toString().replace('.',',')}
+
+function sess(n){
+  var sel = id('ter'+n);
+  var km = parseFloat(id('km'+n).value);
+  var d  = parseFloat(id('d'+n).value);
+  return {
+    km: isNaN(km)||km<0 ? 0 : km,
+    d:  isNaN(d)||d<0 ? 0 : d,
+    cf: parseFloat(sel.value) || 1,
+    tn: sel.options[sel.selectedIndex].text.split(' — ')[0]
+  };
+}
+
+// Calcolo comune a schermo e storico
+function compute(){
+  var cap = parseFloat(id('cap').value);
+  var ini = parseFloat(id('ini').value);
+  var fin = parseFloat(id('fin').value);
+  if(isNaN(cap)||isNaN(ini)||isNaN(fin)) return null;
+  var s = [sess(1), sess(2)];
+  var km = s[0].km + s[1].km;
+  if(km <= 0) return null;
+  var D = s[0].d + s[1].d;
+
+  s.forEach(function(x){ x.w = x.km * x.cf + x.d * DISL_KM; });
+  var eqkm = s[0].w + s[1].w;
+
+  var pu = (ini - fin) / 100;
+  var wh = cap * pu;
+  s.forEach(function(x){
+    x.wh = eqkm > 0 ? wh * x.w / eqkm : 0;
+    x.whkm = x.km > 0 ? x.wh / x.km : 0;
+  });
+
+  var whkm = wh / km;
+  var eq = eqkm > 0 ? wh / eqkm : 0;
+  var factor = eqkm / km;
+  var pr = fin / 100;
+  var tot = pu > 0 ? km / pu : 0;
+  var pct = Math.min(100, Math.max(0, pu * 100));
+  var badge = eq<4 ? 'Ottima' : eq<6 ? 'Buona' : eq<9 ? 'Nella media' : 'Alta';
+  var flatLeft = eq > 0 ? (cap * pr) / eq : 0;
+
+  return {cap:cap, ini:ini, fin:fin, s:s, km:km, D:D, eqkm:eqkm, pu:pu, wh:wh, whkm:whkm,
+          eq:eq, factor:factor, pr:pr, tot:tot, pct:pct, badge:badge, flatLeft:flatLeft};
+}
+
+function calc(){
+  var r = compute();
+  if(!r) return;
+
+  // Sessioni
+  for(var i=0;i<2;i++){
+    var x = r.s[i];
+    set('sr'+(i+1), x.km > 0
+      ? '≈ ' + Math.round(x.wh) + ' Wh · ' + x.whkm.toFixed(1) + ' Wh/km · ' + x.tn + (x.d>0 ? ' · +' + Math.round(x.d) + ' m' : '')
+      : 'Nessun km in questa sessione');
+  }
+
+  // Totale
+  set('totkm', f1(r.km) + ' km');
+  set('totd', Math.round(r.D) + ' m');
+  var p1 = r.s[0].km / r.km * 100;
+  id('st1').style.width = p1 + '%';
+  id('st2').style.width = (100 - p1) + '%';
+  set('lg1', 'Sess. 1: ' + f1(r.s[0].km) + ' km');
+  set('lg2', 'Sess. 2: ' + f1(r.s[1].km) + ' km');
+
+  // Risultati
+  set('r1', r.wh.toFixed(0) + ' Wh');
+  set('r2', r.whkm.toFixed(2));
+  set('r3', (r.whkm*10).toFixed(1));
+  set('r4', Math.round(r.pct) + '%');
+  id('bar').style.width = r.pct + '%';
+  set('bl1', Math.round(r.fin) + '% rimasto');
+  set('bl2', Math.round(r.pct) + '% usato');
+
+  // Autonomia
+  set('a1', Math.round(r.tot));
+  set('a2', Math.round(r.tot * r.pr));
+  set('a3', Math.round(r.cap * r.pr));
+
+  // Efficienza
+  var t1 = r.s[0].km>0 ? r.s[0].tn : null, t2 = r.s[1].km>0 ? r.s[1].tn : null;
+  var tt = (t1 && t2 && t1!==t2) ? t1 + ' / ' + t2 : (t1 || t2);
+  set('tbox', 'Terreno: ' + tt + ' · dislivello ' + Math.round(r.D) + ' m (fattore ' + r.factor.toFixed(2) + 'x)');
+
+  var b = id('badge'), d = id('bdesc'), eq = r.eq;
+  if(eq < 4){
+    b.className='badge ottima'; b.textContent='Ottima';
+    d.textContent='Consumi eccellenti per questo percorso.';
+  } else if(eq < 6){
+    b.className='badge buona'; b.textContent='Buona';
+    d.textContent='Consumi nella norma per questo percorso.';
+  } else if(eq < 9){
+    b.className='badge media'; b.textContent='Nella media';
+    d.textContent='Consumi elevati, valuta di ridurre l\'assistenza.';
+  } else {
+    b.className='badge alta'; b.textContent='Alta';
+    d.textContent='Consumi molto alti per questo percorso.';
+  }
+
+  set('e1', r.whkm.toFixed(2) + ' Wh/km');
+  set('e2', r.eq.toFixed(2) + ' Wh/km');
+  set('e3', r.factor.toFixed(2) + 'x');
+  set('e4', '< ' + (4 * r.factor).toFixed(1) + ' Wh/km');
+  set('e5', Math.round(r.flatLeft) + ' km');
+}
+
+function exportCSV(){
+  var data = JSON.parse(localStorage.getItem('ebike_history') || '[]');
+  if(data.length === 0){ alert('Nessuna uscita da esportare'); return; }
+
+  var rows = [['Data','Terreno','Km totali','Dislivello m','Sess.1 km','Sess.1 terreno','Sess.1 disl. m','Sess.2 km','Sess.2 terreno','Sess.2 disl. m','Batteria usata %','Wh consumati','Wh/km','Autonomia km','Efficienza']];
+  data.forEach(function(item){
+    var a = item.s1 || {}, b = item.s2 || {};
+    rows.push([item.date, item.terreno, item.km, item.disl || 0,
+      a.km !== undefined ? a.km : item.km, a.t || item.terreno, a.d || 0,
+      b.km !== undefined ? b.km : '', b.t || '', b.d || '',
+      item.perc, item.wh, item.whkm, item.tot, item.badge]);
+  });
+
+  var csv = rows.map(function(r){
+    return r.map(function(c){ return '"'+String(c).replace(/"/g,'""')+'"'; }).join(',');
+  }).join('\n');
+
+  var blob = new Blob(['\ufeff'+csv], {type:'text/csv;charset=utf-8'});
+  var url  = URL.createObjectURL(blob);
+  var a    = document.createElement('a');
+  a.href   = url;
+  a.download = 'ebike_storico_' + new Date().toISOString().slice(0,10) + '.csv';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function loadHistory(){
+  var list = id('histlist');
+  var data = JSON.parse(localStorage.getItem('ebike_history') || '[]');
+  if(data.length === 0){
+    list.innerHTML = '<div class="hempty">Nessuna uscita salvata</div>';
+    return;
+  }
+  list.innerHTML = '';
+  data.slice().reverse().forEach(function(item, idx){
+    var realIdx = data.length - 1 - idx;
+    var div = document.createElement('div');
+    div.className = 'hitem';
+    var sub = '';
+    if(item.s1 && item.s2){
+      sub = '<div class="hsub">S1: ' + item.s1.km + ' km, ' + item.s1.t + ', +' + item.s1.d + ' m &nbsp;|&nbsp; S2: ' + item.s2.km + ' km, ' + item.s2.t + ', +' + item.s2.d + ' m</div>';
+    }
+    div.innerHTML =
+      '<button class="hdel" onclick="delHistory('+realIdx+')">✕</button>' +
+      '<div class="hdate">' + item.date + '</div>' +
+      '<div class="hnote">' + item.terreno + ' &nbsp;|&nbsp; ' + item.km + ' km' + (item.disl ? ' &nbsp;|&nbsp; +' + item.disl + ' m' : '') + ' &nbsp;|&nbsp; ' + item.perc + '% usato</div>' +
+      sub +
+      '<div class="htags">' +
+        '<span class="htag">' + item.wh + ' Wh</span>' +
+        '<span class="htag">' + item.whkm + ' Wh/km</span>' +
+        '<span class="htag">Autonomia ' + item.tot + ' km</span>' +
+        '<span class="htag">' + item.badge + '</span>' +
+      '</div>';
+    list.appendChild(div);
+  });
+}
+
+function delHistory(idx){
+  var data = JSON.parse(localStorage.getItem('ebike_history') || '[]');
+  data.splice(idx, 1);
+  localStorage.setItem('ebike_history', JSON.stringify(data));
+  loadHistory();
+}
+
+function saveRide(){
+  var r = compute();
+  if(!r || r.cap <= 0){ alert('Inserisci dati validi prima di salvare'); return; }
+
+  var t1 = r.s[0], t2 = r.s[1];
+  var terr = [];
+  if(t1.km>0) terr.push(t1.tn);
+  if(t2.km>0 && terr.indexOf(t2.tn)<0) terr.push(t2.tn);
+
+  var now  = new Date();
+  var date = now.toLocaleDateString('it-IT', {day:'2-digit',month:'2-digit',year:'numeric'}) +
+             ' ' + now.toLocaleTimeString('it-IT', {hour:'2-digit',minute:'2-digit'});
+
+  var item = {
+    date: date,
+    terreno: terr.join(' / '),
+    km: Math.round(r.km*10)/10,
+    disl: Math.round(r.D),
+    perc: Math.round(r.pu*100),
+    wh: r.wh.toFixed(0),
+    whkm: r.whkm.toFixed(2),
+    tot: Math.round(r.tot),
+    badge: r.badge,
+    s1: {km:t1.km, t:t1.tn, d:Math.round(t1.d)},
+    s2: {km:t2.km, t:t2.tn, d:Math.round(t2.d)}
+  };
+
+  var data = JSON.parse(localStorage.getItem('ebike_history') || '[]');
+  data.push(item);
+  localStorage.setItem('ebike_history', JSON.stringify(data));
+  loadHistory();
+
+  id('savebtn').textContent = 'Salvato!';
+  setTimeout(function(){ id('savebtn').textContent = 'Salva questa uscita'; }, 1500);
+}
+
+window.onload = function(){
+  var saved = ['cap','ini','fin','km1','d1','ter1','km2','d2','ter2'];
+  saved.forEach(function(k){
+    var v = localStorage.getItem('ebike_'+k);
+    if(v !== null && id(k)) id(k).value = v;
+  });
+  id('sl1').value = id('km1').value;
+  id('sl2').value = id('km2').value;
+
+  function save(k){ localStorage.setItem('ebike_'+k, id(k).value); }
+
+  ['cap','ini','fin','d1','d2'].forEach(function(k){
+    id(k).addEventListener('input', function(){ save(k); calc(); });
+  });
+  ['km1','km2'].forEach(function(k){
+    var n = k.slice(-1);
+    id(k).addEventListener('input', function(){ id('sl'+n).value = id(k).value; save(k); calc(); });
+    id('sl'+n).addEventListener('input', function(){ id(k).value = id('sl'+n).value; save(k); calc(); });
+  });
+  ['ter1','ter2'].forEach(function(k){
+    id(k).addEventListener('change', function(){ save(k); calc(); });
+  });
+
+  id('savebtn').addEventListener('click', saveRide);
+  id('expbtn').addEventListener('click', exportCSV);
+  loadHistory();
+  if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+  calc();
+};
+</script>
+</body>
+</html>
