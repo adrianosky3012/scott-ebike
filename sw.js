@@ -1,4 +1,4 @@
-var CACHE = 'ebike-battery-v6';
+var CACHE = 'ebike-battery-v7';
 var FILES = ['index.html', 'manifest.json', 'icon-192.png', 'icon-512.png'];
 
 self.addEventListener('install', function(e){
